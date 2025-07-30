@@ -1,7 +1,7 @@
 
 # 🛒 Jumia Web Scraper and MongoDB Integration
 
-![Jumia Screenshot](landing-image.png)
+![Jumia Screenshot](jumia.png)
 
 ## Overview
 
