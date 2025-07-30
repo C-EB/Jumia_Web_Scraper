@@ -41,7 +41,7 @@ The project demonstrates my ability to work with:
 
 ## Example Output (MongoDB Atlas)
 
-![Database Screenshot](assets/db-preview.png)
+![Database Screenshot](assets/mongo.png)
 
 Each document in the database has this structure:
 
