@@ -5,14 +5,13 @@
 
 ## Overview
 
-This project is a functional and scalable **web scraping script** designed to extract real product data from [Jumia](https://www.jumia.com.eg/ar), one of Africa’s largest online marketplaces. It uses **Selenium** for dynamic content scraping and stores the structured data in a **MongoDB Atlas** cloud database.
+This project is a functional and scalable **web scraping tool** that extracts **over 1000 real product listings** from [Jumia](https://www.jumia.com.eg/ar), one of Africa’s largest e-commerce platforms. It uses **Selenium** for dynamic content scraping and stores the structured data in a **MongoDB Atlas** cloud database.
 
 The project demonstrates my ability to work with:
 - Web automation and scraping using **Selenium WebDriver**
 - Data extraction and cleaning using **Python and Regex**
 - NoSQL database integration using **MongoDB**
 - Automation best practices (modular functions, headless browser, user-agent spoofing)
-
 ---
 
 ## Features
