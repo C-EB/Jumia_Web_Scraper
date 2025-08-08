@@ -1,60 +1,65 @@
+# Jumia Product Scraper (Selenium-Based)
 
-# 🛒 Jumia Web Scraper and MongoDB Integration
+This project implements an automated web scraper for Jumia Egypt, built using Selenium WebDriver and Python. It is designed to extract structured product data from multiple categories with accurate pricing, discount calculations, and smart update handling. The scraped data is stored in a MongoDB collection for further analysis or use.
 
-![Jumia Screenshot](assets/jumia.png)
+## Project Objective
 
-## Overview
+The primary goal of this scraper is to collect comprehensive product listings from Jumia’s online store, capturing key data points such as product titles, prices, and discount metrics. The system ensures data freshness and avoids duplication by comparing current listings with existing records.
 
-This project is a functional and scalable **web scraping tool** that extracts **over 1000 real product listings** from [Jumia](https://www.jumia.com.eg/ar), one of Africa’s largest e-commerce platforms. It uses **Selenium** for dynamic content scraping and stores the structured data in a **MongoDB Atlas** cloud database.
+## Extracted Data
 
-The project demonstrates my ability to work with:
-- Web automation and scraping using **Selenium WebDriver**
-- Data extraction and cleaning using **Python and Regex**
-- NoSQL database integration using **MongoDB**
-- Automation best practices (modular functions, headless browser, user-agent spoofing)
----
+For each product found in the specified categories, the scraper collects the following information:
 
-## Features
+- `product_title`: Full name of the product.
+- `product_url`: Direct link to the product detail page.
+- `current_price`: The current listed price.
+- `old_price`: The original price before discount (if any).
+- `discount_percentage`: Calculated percentage off.
+- `discount_quantity`: Absolute discount value in currency.
+- `inserted_at`: Timestamp of the first insertion.
+- `updated_at`: Timestamp of the most recent update.
+- `published_at`: Boolean field for custom publication logic.
 
-- 🚀 Extracts product details such as:
-  - Product title
-  - Product URL
-  - Current price
-  - Old price (if available)
-- Automatically saves product data in `jumia.products` collection on MongoDB Atlas
-- Modular design with reusable scraping and driver initialization functions
-- Headless scraping support (no GUI browser needed)
-- Price parsing and formatting with regex for data consistency
+## Core Features and Implementation Highlights
 
----
+- **Smart Browser Automation**: Uses Selenium with a configurable Firefox profile and user-agent to simulate a real user browsing experience, including support for headless mode.
+- **Popup Handling**: Automatically closes promotional popups that interfere with page loading.
+- **Efficient Navigation**: Iterates through categories and paginated results using dynamically constructed URLs.
+- **Robust Price Parsing**: Implements regex-based extraction and normalization of price values across various formats (e.g., commas, spaces).
+- **Data Validation and Deduplication**: Prevents redundant inserts by checking for existing entries in the MongoDB collection using product title or URL.
+- **Automatic Price Updates**: Updates product records if price data changes on subsequent scrapes, preserving historical price tracking.
+- **Modular Architecture**: Clean separation between configuration, browser setup, page retrieval, data parsing, and database interaction.
+- **Database-Ready Output**: Collected data is stored in a MongoDB database in a structured, queryable format.
 
-## Technologies Used
+## Scraping Results
 
-- **Python**
-- **Selenium**
-- **MongoDB Atlas (Cloud)**
-- **Regex**
-- **GeckoDriver + Firefox**
+The scraper targets key categories such as:
 
----
+- Phones & Tablets
+- Electronics
 
-## Example Output (MongoDB Atlas)
+Across five pages per category, the system successfully extracted and inserted/upgraded **hundreds of product records**, depending on the availability and variation in listings. Each scrape session handles both new additions and changes to existing listings, ensuring up-to-date accuracy with minimal redundancy.
 
-![Database Screenshot](assets/mongo.png)
+The output is structured for MongoDB, allowing easy export to JSONL or direct use in data pipelines, dashboards, or analytics tools.
 
-Each document in the database has this structure:
+## Technical Skills Demonstrated
 
-```json
-{"_id":{"$oid":"688a480a3c2e411eda50a58d"},
-"product_title":"كابل اصلي - كابل شحن سريع 65 واط USB A/USB C إلى Type-C & Lightning - SS272- كابل شحن جودة عالية 4*1 - كابل شحن ايفون - كابل شحن تايب سى - كابل شحن نينجا",
-"product_url":"https://www.jumia.com.eg/ar/generic-original-41-charging-cable-usb-ausb-c-to-type-c-lightning-65w-fast-turbo-charging-cable-130124149.html",
-"current_price":{"$numberInt":"80"},
-"old_price":{"$numberInt":"150"},
-"discount_percentage":{"$numberInt":"47"},
-"discount_quantity":{"$numberInt":"70"},
-"inserted_at":{"$date":{"$numberLong":"1753896474888"}},
-"updated_at":{"$date":{"$numberLong":"1753896474888"}},
-"published_at":false}
-````
+- Advanced Selenium scripting and dynamic content handling  
+- HTML parsing and DOM navigation using CSS selectors  
+- Data normalization and validation with regular expressions  
+- Automated browser control with user-agent and media preference configurations  
+- Clean and modular Python code adhering to best practices  
+- MongoDB integration for scalable data storage  
+- Error-tolerant execution and popup handling logic  
+- Performance tuning via headless browsing and page load timing
 
 ---
+
+## MongoDB Atlas Snapshot
+
+Below is a sample screenshot of the MongoDB Atlas dashboard showing the scraped data records for verification and demonstration purposes:
+
+![MongoDB Atlas Overview](./assets/mongo.png)
+<sub>_Example: Screenshot of the `products` collection displaying scraped data fields in the Atlas UI._</sub>
+
+> To replace this image, upload your own database screenshot to the `/assets` folder and update the filename as needed.
