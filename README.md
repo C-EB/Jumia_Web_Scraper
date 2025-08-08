@@ -61,5 +61,3 @@ Below is a sample screenshot of the MongoDB Atlas dashboard showing the scraped 
 
 ![MongoDB Atlas Overview](./assets/mongo.png)
 <sub>_Example: Screenshot of the `products` collection displaying scraped data fields in the Atlas UI._</sub>
-
-> To replace this image, upload your own database screenshot to the `/assets` folder and update the filename as needed.
