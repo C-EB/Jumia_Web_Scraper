@@ -1,6 +1,6 @@
 # Jumia Product Scraper (Selenium-Based)
 
-This project implements an automated web scraper for Jumia Egypt, built using Selenium WebDriver and Python. It is designed to extract structured product data from multiple categories with accurate pricing, discount calculations, and smart update handling. The scraped data is stored in a MongoDB collection for further analysis or use.
+This project implements an automated web scraper for Jumia, built using Selenium WebDriver and Python. It is designed to extract structured product data from multiple categories with accurate pricing, discount calculations, and smart update handling. The scraped data is stored in a MongoDB collection for further analysis or use.
 
 ## Project Objective
 
