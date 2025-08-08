@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jumia Product Scraper | Selenium-Based Web Scraping</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --jumia-orange: #f68b1f;
+            --jumia-dark: #313131;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --background-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+            --hero-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: #f1f3f5; /* A light grey to make white elements pop */
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 24px;
+            margin: 3rem auto;
+            padding: 4rem 2.5rem;
+            text-align: center;
+            box-shadow: var(--hero-shadow);
+            border: 1px solid var(--border-color);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--jumia-dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 .fa-spider {
+            color: var(--jumia-orange);
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+        }
+
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .badge {
+            background: var(--jumia-dark);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-3px);
+            background-color: var(--jumia-orange);
+        }
+
+        .content {
+            background: white;
+            margin: 2rem auto;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .section {
+            padding: 4rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            background: var(--jumia-orange);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .overview {
+            background: var(--background-light);
+        }
+
+        .overview p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #495057;
+            max-width: 900px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .data-item {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border-left: 4px solid var(--border-color);
+        }
+
+        .data-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-left-color: var(--jumia-orange);
+        }
+
+        .data-item h3 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .data-item h3 i {
+            color: var(--jumia-orange);
+        }
+
+        .data-item p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .feature-card {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--jumia-orange);
+            transform: scaleX(0);
+            transition: transform 0.4s ease-in-out;
+            transform-origin: left;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+            border-color: #adb5bd;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--jumia-orange);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .results {
+            background: var(--background-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--jumia-orange);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 0.75rem;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .skill-tag {
+            background: #e9ecef;
+            color: var(--jumia-dark);
+            padding: 0.8rem 1.75rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .skill-tag i {
+            color: var(--jumia-orange);
+            transition: color 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-3px);
+            background-color: var(--jumia-dark);
+            color: white;
+        }
+
+        .skill-tag:hover i {
+            color: white;
+        }
+
+        .mongodb-snapshot {
+            border-radius: 20px;
+            margin-top: 2.5rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: 450px;
+            background-color: #f0f2f5;
+            border: 1px solid var(--border-color);
+        }
+
+        .mongodb-snapshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: transform 0.5s ease-out;
+        }
+
+        .mongodb-snapshot:hover img {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background: var(--jumia-dark);
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1.75rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: var(--jumia-orange);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .code-highlight {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: #1a202c;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--jumia-orange);
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: var(--jumia-orange);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .section {
+                padding: 3rem 1.5rem;
+            }
+
+            .section h2 {
+                font-size: 2rem;
+            }
+
+            .data-grid, .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <div class="container">
+        <header class="hero">
+            <h1><i class="fas fa-spider"></i> Jumia Product Scraper</h1>
+            <p class="subtitle">Advanced Selenium-Based Web Scraping Solution with MongoDB Integration</p>
+            <div class="tech-badges">
+                <span class="badge"><i class="fab fa-python"></i> Python</span>
+                <span class="badge"><i class="fas fa-robot"></i> Selenium</span>
+                <span class="badge"><i class="fas fa-database"></i> MongoDB</span>
+                <span class="badge"><i class="fab fa-firefox-browser"></i> Firefox</span>
+                <span class="badge"><i class="fas fa-chart-line"></i> Data Analytics</span>
+            </div>
+        </header>
+
+        <main class="content">
+            <section class="section overview" id="overview">
+                <h2>
+                    <div class="section-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    Project Overview
+                </h2>
+                <p>
+                    This project implements a sophisticated automated web scraper for Jumia, Morocco's leading e-commerce platform.
+                    Built with Selenium WebDriver and Python, it extracts structured product data from multiple categories with precise
+                    pricing analysis, smart discount calculations, and intelligent update handling. The solution features robust popup
+                    management, efficient pagination navigation, and seamless MongoDB integration for scalable data storage and analysis.
+                </p>
+            </section>
+
+            <section class="section" id="data-fields">
+                <h2>
+                    <div class="section-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    Extracted Data Fields
+                </h2>
+                <div class="data-grid">
+                    <div class="data-item"><h3><i class="fas fa-tag"></i> product_title</h3><p>Complete product name extracted from listing pages</p></div>
+                    <div class="data-item"><h3><i class="fas fa-link"></i> product_url</h3><p>Direct link to the product detail page for reference</p></div>
+                    <div class="data-item"><h3><i class="fas fa-dollar-sign"></i> current_price</h3><p>Current listed price with currency normalization</p></div>
+                    <div class="data-item"><h3><i class="fas fa-history"></i> old_price</h3><p>Original price before discount application (if available)</p></div>
+                    <div class="data-item"><h3><i class="fas fa-percent"></i> discount_percentage</h3><p>Calculated percentage discount for promotional analysis</p></div>
+                    <div class="data-item"><h3><i class="fas fa-calculator"></i> discount_quantity</h3><p>Absolute discount value in local currency</p></div>
+                    <div class="data-item"><h3><i class="fas fa-clock"></i> inserted_at</h3><p>Timestamp of initial data insertion for tracking</p></div>
+                    <div class="data-item"><h3><i class="fas fa-sync"></i> updated_at</h3><p>Timestamp of most recent update for freshness tracking</p></div>
+                    <div class="data-item"><h3><i class="fas fa-eye"></i> published_at</h3><p>Boolean field for custom publication workflow logic</p></div>
+                </div>
+            </section>
+
+            <section class="section" id="features">
+                <h2>
+                    <div class="section-icon"><i class="fas fa-cogs"></i></div>
+                    Core Features & Implementation
+                </h2>
+                <div class="features-grid">
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-robot"></i></div><h3>Smart Browser Automation</h3><p>Selenium WebDriver with configurable Firefox profiles, headless mode support, and optimized performance settings</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-window-close"></i></div><h3>Popup Management</h3><p>Intelligent detection and handling of promotional popups and overlay advertisements</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-route"></i></div><h3>Efficient Navigation</h3><p>Smart category traversal and paginated result processing with configurable depth limits</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-code"></i></div><h3>Robust Price Parsing</h3><p>Advanced regex-based price extraction handling multiple currency formats and localization</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-check-double"></i></div><h3>Data Validation</h3><p>Comprehensive deduplication logic and data integrity checks with MongoDB queries</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-sync-alt"></i></div><h3>Price Update Tracking</h3><p>Automatic price change detection with historical preservation and timestamp management</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-cubes"></i></div><h3>Modular Architecture</h3><p>Clean separation of concerns: configuration, scraping logic, parsing utilities, and database operations</p></div>
+                    <div class="feature-card"><div class="feature-icon"><i class="fas fa-database"></i></div><h3>MongoDB Integration</h3><p>Cloud-ready database storage with MongoDB Atlas, optimized queries, and efficient data operations</p></div>
+                </div>
+            </section>
+
+            <section class="section results" id="results">
+                <h2>
+                    <div class="section-icon"><i class="fas fa-chart-bar"></i></div>
+                    Scraping Results & Performance
+                </h2>
+                <p style="margin-bottom: 2.5rem; font-size: 1.15rem; color: #495057; max-width: 900px;">
+                    The scraper efficiently targets high-traffic categories including Phones & Tablets and Electronics,
+                    processing up to 5 pages per category. The system demonstrates excellent performance with minimal
+                    redundancy and robust update handling.
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card"><span class="stat-number">2</span><div class="stat-label">Target Categories</div></div>
+                    <div class="stat-card"><span class="stat-number">5</span><div class="stat-label">Pages per Category</div></div>
+                    <div class="stat-card"><span class="stat-number">100+</span><div class="stat-label">Products Extracted</div></div>
+                    <div class="stat-card"><span class="stat-number">9</span><div class="stat-label">Data Fields per Product</div></div>
+                </div>
+            </section>
+
+            <section class="section" id="skills">
+                <h2>
+                    <div class="section-icon"><i class="fas fa-tools"></i></div>
+                    Technical Skills Demonstrated
+                </h2>
+                <div class="skills-list">
+                    <div class="skill-tag"><i class="fas fa-spider"></i> Advanced Selenium Scripting</div>
+                    <div class="skill-tag"><i class="fas fa-code"></i> HTML Parsing & DOM Navigation</div>
+                    <div class="skill-tag"><i class="fas fa-filter"></i> Data Normalization</div>
+                    <div class="skill-tag"><i class="fas fa-desktop"></i> Automated Browser Control</div>
+                    <div class="skill-tag"><i class="fab fa-python"></i> Clean, Modular Python Code</div>
+                    <div class="skill-tag"><i class="fas fa-database"></i> MongoDB Integration</div>
+                    <div class="skill-tag"><i class="fas fa-shield-alt"></i> Error-Tolerant Execution</div>
+                    <div class="skill-tag"><i class="fas fa-tachometer-alt"></i> Performance Optimization</div>
+                </div>
+            </section>
+
+            <section class="section" id="mongodb">
+                <h2>
+                    <div class="section-icon"><i class="fas fa-leaf"></i></div>
+                    MongoDB Atlas Integration
+                </h2>
+                <div class="mongodb-snapshot">
+                    <img src="assets/mongo.png">
+                </div>
+                <div style="margin-top: 2rem;">
+                    <div class="code-highlight">
+                        <strong>Connection String:</strong><br>
+                        mongodb+srv://username:password@cluster.mongodb.net/<br><br>
+                        <strong>Collection:</strong> jumia.products<br>
+                        <strong>Operations:</strong> Insert, Update, Query, Deduplication
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/C-EB/Jumia_Web_Scraper/" class="footer-link"><i class="fab fa-github"></i> View Source Code</a>
+                <a href="#" class="footer-link"><i class="fas fa-download"></i> Download Project</a>
+                <a href="#" class="footer-link"><i class="fas fa-envelope"></i> Contact Developer</a>
+                <a href="#" class="footer-link"><i class="fas fa-file-alt"></i> Documentation</a>
+            </div>
+            <p>&copy; 2025 Jumia Product Scraper Project. Built with <i class="fas fa-heart" style="color: var(--jumia-orange);"></i> using Python & Selenium.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scrollProgress').style.width = scrolled + '%';
+        });
+
+        // Animate sections on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
